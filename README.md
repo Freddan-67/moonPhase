@@ -1,18 +1,25 @@
 # moonDistance
 Downloads the 1122 images from the distance folder at NASA
 Added scaling to 1920x1080
+
 [![video](https://img.youtube.com/vi/IstgFh7EE6Y/0.jpg)](https://youtu.be/D48lmI_Sb28)
+
 # moonOrbit
 Downloads the 999 images from the orbit folder
 Added scaling to 1920x1080
+
 [![video](https://img.youtube.com/vi/xIVGC1HEWyU/0.jpg)](https://youtu.be/xIVGC1HEWyU)
+
 # himawari
 Downloads the 2500 lates images from himawari sattellite. This code is uglier since some pictures are missing,
 and ffmpeg crashes if images are missing
 Added scaling to 1920x1080
+
 [![video](https://img.youtube.com/vi/IstgFh7EE6Y/0.jpg)](https://www.youtube.com/watch?v=IstgFh7EE6Y)
+
 # moonPhase
 Downloads 8762 photos of the moon from a NASA website and uses them to create a fluid animation (click):
+
 [![video](https://img.youtube.com/vi/0tjY13kYnZs/0.jpg)]https://youtu.be/0tjY13kYnZs)
 
 See [here for an introduction/tutorial](https://nicholasfarrow.com/Creating-a-Moon-Animation-Using-NASA-Images-and-Python/).
