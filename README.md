@@ -20,7 +20,7 @@ Added scaling to 1920x1080
 # moonPhase
 Downloads 8762 photos of the moon from a NASA website and uses them to create a fluid animation (click):
 
-[![video](https://img.youtube.com/vi/0tjY13kYnZs/0.jpg)]https://youtu.be/0tjY13kYnZs)
+[![video](https://img.youtube.com/vi/0tjY13kYnZs/0.jpg)](https://youtu.be/0tjY13kYnZs)
 
 See [here for an introduction/tutorial](https://nicholasfarrow.com/Creating-a-Moon-Animation-Using-NASA-Images-and-Python/).
 
