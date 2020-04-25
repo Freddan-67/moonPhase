@@ -3,7 +3,8 @@ import os
 import imageio
 import argparse
 import subprocess
-totalImages totalImages
+#this number is actually one bigger than max image number
+totalImages = 1122
 # Argument parser
 parser = argparse.ArgumentParser("Download Moon Images and Create Video")
 parser.add_argument("-t", "--thinning", default=1, help="Frequency of images to download, e.g. every 10th image")
@@ -21,10 +22,10 @@ def getImage(imageNumber, directory):
     URL = (
             "https://svs.gsfc.nasa.gov"
             "/vis/a000000/a004600/a004604/frames/"
-            "730x730_1x1_30p/moon.{}.jpg"
+            "1920x1080_16x9_30p/distance/dist.{}.tif"
             ).format(imageNumber)
 
-    imageName = directory + imageNumber + ".jpg"
+    imageName = directory + imageNumber + ".tif"
     req.urlretrieve(URL, imageName)
     return
 
@@ -32,28 +33,29 @@ def makeVideo(directory, startNumber, thinning, ffmpeg=False):
     """Create a video with the downloaded images"""
     
     # Get a list of all the files 
-    files = [image for image in os.listdir(directory) if ".jpg" in image]
+    files = [image for image in os.listdir(directory) if ".tif" in image]
     
 
     # Create a video using ffmpeg command
     if ffmpeg:
-        frameRate = len(files)/60
-        frameRate = min(30,frameRate)
-        frameRate = str(frameRate)
-        print("framerate %s\n" % (frameRate));
+        #frameRate = len(files)/60
+        #frameRate = min(30,frameRate)
+        frameRate = 10
         subprocess.run(
                 ["ffmpeg",
-                "-r", frameRate, 
+                "-r", str(frameRate), 
                 "-pattern_type", "glob",
-                "-i", "./" + directory + "*.jpg",
-                "-vf", "scale=1366:768:force_original_aspect_ratio=decrease,pad=1366:768:(ow-iw)/2:(oh-ih)/2",
-                "-vb", "20M", "moon.mp4"], check=True)
+                "-i", "./" + directory + "/*.tif",
+                "-vf" , "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2", 
+                "-vb", "50M", "moondistance.mp4"], 
+                check=True)
     
     else:
         # Save each image frame to a list
         images = []
         for imageNumber in range(startNumber, totalImages, thinning):
-            imageName = directory + addZeros(imageNumber) + ".jpg"
+            imageName = directory + addZeros(imageNumber) + ".tif"
+            #print("imageName " + imageName);
             images.append(imageio.imread(imageName))
 
         imageio.mimsave('moon.gif', images)
@@ -61,7 +63,7 @@ def makeVideo(directory, startNumber, thinning, ffmpeg=False):
 
 def main(startNumber=1, thinning=1, ffmpeg=False):
     
-    directory = 'images/'
+    directory = 'distance/'
 
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -71,7 +73,7 @@ def main(startNumber=1, thinning=1, ffmpeg=False):
         imageNumber = addZeros(imageNumber)
         
         # Skip if already downloaded
-        if os.path.exists(directory + imageNumber + ".jpg"):
+        if os.path.exists(directory + imageNumber + ".tif"):
             print("Already downloaded " + imageNumber)  
             continue
             
