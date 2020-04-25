@@ -2,7 +2,7 @@
 Downloads the 1122 images from the distance folder at NASA
 Added scaling to 1920x1080
 
-[![video](https://img.youtube.com/vi/IstgFh7EE6Y/0.jpg)](https://youtu.be/D48lmI_Sb28)
+[![video](https://img.youtube.com/vi/D48lmI_Sb28/0.jpg)](https://youtu.be/D48lmI_Sb28)
 
 # moonOrbit
 Downloads the 999 images from the orbit folder
