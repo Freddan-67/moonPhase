@@ -8,14 +8,16 @@ import datetime as dt
 import shutil
 
 # Argument parser
-parser = argparse.ArgumentParser("Download Earth Images and Create Video")
+parser = argparse.ArgumentParser("Download Earth Himawari and Create Video")
 parser.add_argument("-t", "--thinning", default=1, help="Frequency of images to download, e.g. every 10th image")
 parser.add_argument("-f", "--ffmpeg", action='store_true', help="Use ffmpeg to create video")
+parser.add_argument("-g", "--gif", action='store_true', help="Use gif animation (very big size)")
 args = parser.parse_args()
 
-
+fixUri = "http://rammb.cira.colostate.edu/ramsdis/online/images/himawari-8/full_disk_ahi_true_color" 
+	 "/full_disk_ahi_true_color_"
 def add2Zeros(imageNumber):
-    """Add leading zeros to a number, up to 4 digits."""
+    """Add leading zeros to a number, up to 2 digits."""
     numAdd = 2 - len(str(imageNumber))
     return "0" * numAdd + str(imageNumber)
 
@@ -26,7 +28,13 @@ def addZeros(imageNumber):
 
 
 def getImage(imageNumber, directory,totalImages,lastImage):
-    """Download an image given an image to an output directory"""
+    """ Download an image given an image to an output directory
+    *** One image each 10 minute, => 6*24 (144) images a day
+    *** total number of images divided by 144 gives the first image to get
+    *** currently set to 17.35 days
+    *** this is rounded to 17 days and backed to midning
+    ***
+    """ 
     sDays = totalImages/(6*24)
     sDate = dt.datetime.now() - dt.timedelta(days=sDays)
     #print("date initial= " ,sDate)
@@ -41,20 +49,14 @@ def getImage(imageNumber, directory,totalImages,lastImage):
     #sDate.replace(minute=0,second=0,microsecond=0) 
     #print("date = " ,sDate," ", add2Zeros(str(sDate.year)), add2Zeros(str(sDate.month)), add2Zeros(str(sDate.day)), add2Zeros(str(sDate.hour)), add2Zeros(str(sDate.minute))+"00");
      
-    URL1 = (
-            "http://rammb.cira.colostate.edu/"
-            "ramsdis/online/images/"
-            "himawari-8/full_disk_ahi_true_color/full_disk_ahi_true_color_"+
+    URL1 = (fixUri+
             str(sDate.year)+
             add2Zeros(str(sDate.month))+
             add2Zeros(str(sDate.day))+
             add2Zeros(str(sDate.hour))+
             add2Zeros(str(sDate.minute))+"00.jpg")
 
-    URL2 = (
-            "http://rammb.cira.colostate.edu/"
-            "ramsdis/online/himaw/"
-            "himawari-8/full_disk_ahi_true_color/full_disk_ahi_true_color_"+
+    URL2 = (fixUri+
             str(sDate.year)+
             add2Zeros(str(sDate.month))+
             add2Zeros(str(sDate.day))+
@@ -68,6 +70,7 @@ def getImage(imageNumber, directory,totalImages,lastImage):
         req.urlretrieve(URL1, imageName)
     
     except:
+        #some images are missing
         #print("lastImage3a=", lastImage, " error=" , sys.exc_info())
         #print ("check if ", imageName, " isfile=" , os.path.isfile(imageName))
         if( os.path.isfile(imageName) == False):
@@ -77,6 +80,8 @@ def getImage(imageNumber, directory,totalImages,lastImage):
              # dublicate last
              # shutil.copyfile(lastImage,imageName)
     finally:
+        #if we failed to retry download, we simply copy the last image (HACK)
+        #and pretent we did not notice.
         if( os.path.isfile(imageName) == False):
              print("dublicating ", lastImage, " to ", imageName)
              shutil.copyfile(lastImage,imageName)
@@ -85,7 +90,7 @@ def getImage(imageNumber, directory,totalImages,lastImage):
     
     return
 
-def makeVideo(directory, startNumber, thinning, ffmpeg=False):
+def makeVideo(directory, startNumber, totalImages, thinning, ffmpeg=True):
     """Create a video with the downloaded images"""
     
     # Get a list of all the files 
@@ -116,7 +121,7 @@ def makeVideo(directory, startNumber, thinning, ffmpeg=False):
         imageio.mimsave('earth-himawari.gif', images)
     return
 
-def main(startNumber=1, thinning=1, ffmpeg=False):
+def main(startNumber=1, thinning=1, ffmpeg=True):
     
     directory = 'himaw/'
     totalImages = 2500
@@ -168,10 +173,10 @@ def main(startNumber=1, thinning=1, ffmpeg=False):
             break
             
     print("Making video...")
-    makeVideo(directory, startNumber, thinning, ffmpeg)
+    makeVideo(directory, startNumber, totalImages, thinning, ffmpeg)
     return
 
 
-main(1, int(args.thinning), args.ffmpeg)
+main(1, int(args.thinning), args.gif)
 
 
